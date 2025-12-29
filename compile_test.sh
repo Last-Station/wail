@@ -18,7 +18,7 @@ set -e
 
 echo -e "${YELLOW}Creating file links.${NC}"
 
-ln -f resources/font/Noto_Sans/NotoSans-VariableFont_wdth,wght.ttf \
+ln -s '../../../../resources/font/Noto_Sans/NotoSans-Italic-VariableFont_wdth,wght.ttf' \
     build/resources/font/Noto_Sans/Default_Font.ttf
 
 echo -e "${YELLOW}Compiling resources.${NC}"
@@ -38,14 +38,14 @@ g++ -c src/gui/HSButton.cpp -o build/HSButton.o \
 
 g++ -c src/main.cpp -o build/main.o \
  -Wall -Wextra -pedantic \
- -L../SDL3 -L../SDL3_ttf -lSDL3_ttf -lSDL3
+ -I ./src -L../SDL3 -L../SDL3_ttf -lSDL3_ttf -lSDL3
 
 echo -e "${YELLOW}Basically linking everything together at this point!${NC}"
 
 cd build
 
 g++ *.o resources/*.o -o test_build \
- -L../SDL3 -L../SDL3_ttf -lSDL3_ttf -lSDL3
+ -L../SDL3 -L../SDL3_ttf -lSDL3_ttf -lSDL3 `pkg-config --cflags --libs sdl3`
 
 echo -e "${GREEN}Done!${NC}"
 

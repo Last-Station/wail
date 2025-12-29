@@ -54,8 +54,7 @@ int SmartRendering() {
 
     // Display and manage main window components, such as button presses,
     // window resizing, other window events, mouse events etc. (TODO)
-int MainWindow() {
-
+int MainWindow(void (*on_loop)(void *data)) {
     bool SDL_tasks_done {0};
 
     if (!SDL_Init(SDL_INIT_VIDEO)) {
@@ -87,6 +86,8 @@ int MainWindow() {
                 SDL_tasks_done = 1;
             }
         }
+
+        on_loop(NULL);
 
         // Clear the window making the background transparent
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);

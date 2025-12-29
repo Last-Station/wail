@@ -57,11 +57,11 @@ int map_entities_add(struct map *map, struct map_entity *entity){
 	if(nalloc == NULL){
 		exit(1); //TODO: OUT OF MEMORY
 	}
-
-	map->entities = nalloc;
+	map->entities = (struct map_entity *) nalloc;
 	memcpy(&map->entities[count], entity, sizeof(struct map_entity));
 	map->entities[count + 1].type = 0;
 
+	return 0;
 }
 
 int map_entities_unset(struct map *map, size_t index){
@@ -74,6 +74,8 @@ int map_entities_unset(struct map *map, size_t index){
 		return -1;
 
 	map->entities[index].type = MAP_ENTITY_UNSET;
+
+	return 0;
 }
 
 int map_entities_defrag(struct map *map){
@@ -81,7 +83,9 @@ int map_entities_defrag(struct map *map){
 		return -1;
 
 	size_t count = map_entities_len(map);
-	struct map_entity *copy = malloc(sizeof(struct map_entity)*count);
+	struct map_entity *copy = (struct map_entity *)
+		malloc(sizeof(struct map_entity)*count)
+	;
 	size_t new_size = 0;
 	size_t position = 0;
 	while(map->entities[position].type != 0){
@@ -103,8 +107,11 @@ int map_entities_defrag(struct map *map){
 	copy[new_size].type = 0;
 
 	new_size++;
-	copy = realloc(copy, sizeof(struct map_entity)*new_size);
+	copy = (struct map_entity *)
+		realloc(copy, sizeof(struct map_entity)*new_size);
 	map->entities = copy;
+
+	return 0;
 }
 
 struct map_entity *map_entities_get(struct map *map, size_t index){
