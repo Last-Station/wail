@@ -5,12 +5,12 @@
 #include <stdint.h>
 
     // Window title info
-#define PROGRAM_NAME ""
-#define PROGRAM_VERSION ""
+#define PROGRAM_NAME "Wail"
+#define PROGRAM_VERSION "v0.0"
 
     // Startup window dimentions
-//#define WINDOW_WIDTH 670
-//#define WINDOW_HEIGHT 330
+#define WINDOW_WIDTH 670
+#define WINDOW_HEIGHT 330
 
     // Must be initialized before use!
 extern SDL_Window *window;

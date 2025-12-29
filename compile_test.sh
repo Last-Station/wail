@@ -16,7 +16,7 @@ mkdir -p build/resources/font/Noto_Sans
 # Exit on error
 set -e
 
-echo -e "${YELLOW}Creating symbolic links.${NC}"
+echo -e "${YELLOW}Creating file links.${NC}"
 
 ln -f resources/font/Noto_Sans/NotoSans-VariableFont_wdth,wght.ttf \
     build/resources/font/Noto_Sans/Default_Font.ttf

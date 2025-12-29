@@ -1,4 +1,3 @@
-#include <iostream>
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
 #include <SDL3_ttf/SDL_ttf.h>
@@ -17,8 +16,6 @@ int main() { // for testing only (TODO)
         cleanup();
         return 1;
     }
-
-    std::cout << "test\n";
 
     return 0;
 }
