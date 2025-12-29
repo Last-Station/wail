@@ -1,0 +1,4 @@
+2025-12-29 17:47:05.696 WIB [10807] FATAL:  lock file "postmaster.pid" already exists
+2025-12-29 17:47:05.696 WIB [10807] HINT:  Is another postmaster (PID 20845) running in data directory "/data/data/com.termux/files/home/postgresql"?
+2025-12-29 17:47:06.416 WIB [10830] FATAL:  lock file "postmaster.pid" already exists
+2025-12-29 17:47:06.416 WIB [10830] HINT:  Is another postmaster (PID 20845) running in data directory "/data/data/com.termux/files/home/postgresql"?
