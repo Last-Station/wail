@@ -116,3 +116,28 @@
 2025-12-30 11:37:24.389 WIB [9977] HINT:  Is another postmaster (PID 6860) running in data directory "/data/data/com.termux/files/home/postgresql"?
 2025-12-30 11:37:25.292 WIB [10000] FATAL:  lock file "postmaster.pid" already exists
 2025-12-30 11:37:25.292 WIB [10000] HINT:  Is another postmaster (PID 6860) running in data directory "/data/data/com.termux/files/home/postgresql"?
+2025-12-30 11:38:25.644 WIB [10446] FATAL:  lock file "postmaster.pid" already exists
+2025-12-30 11:38:25.644 WIB [10446] HINT:  Is another postmaster (PID 6860) running in data directory "/data/data/com.termux/files/home/postgresql"?
+2025-12-30 11:38:26.401 WIB [10471] FATAL:  lock file "postmaster.pid" already exists
+2025-12-30 11:38:26.401 WIB [10471] HINT:  Is another postmaster (PID 6860) running in data directory "/data/data/com.termux/files/home/postgresql"?
+2025-12-30 11:45:15.299 WIB [15470] LOG:  starting PostgreSQL 17.0 on aarch64-unknown-linux-android, compiled by Android (13624864, +pgo, +bolt, +lto, +mlgo, based on r530567e) clang version 19.0.1 (https://android.googlesource.com/toolchain/llvm-project 97a699bf4812a18fb657c2779f5296a4ab2694d2), 64-bit
+2025-12-30 11:45:15.301 WIB [15470] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2025-12-30 11:45:15.303 WIB [15470] LOG:  listening on Unix socket "/data/data/com.termux/files/usr/tmp/.s.PGSQL.5432"
+2025-12-30 11:45:15.446 WIB [15476] LOG:  database system was interrupted; last known up at 2025-12-30 11:32:59 WIB
+2025-12-30 11:45:15.582 WIB [15476] LOG:  database system was not properly shut down; automatic recovery in progress
+2025-12-30 11:45:15.586 WIB [15476] LOG:  redo starts at 0/201DBB8
+2025-12-30 11:45:15.586 WIB [15476] LOG:  invalid record length at 0/201DBF0: expected at least 24, got 0
+2025-12-30 11:45:15.586 WIB [15476] LOG:  redo done at 0/201DBB8 system usage: CPU: user: 0.00 s, system: 0.00 s, elapsed: 0.00 s
+2025-12-30 11:45:15.595 WIB [15474] LOG:  checkpoint starting: end-of-recovery immediate wait
+2025-12-30 11:45:15.620 WIB [15474] LOG:  checkpoint complete: wrote 3 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.008 s, sync=0.003 s, total=0.027 s; sync files=2, longest=0.002 s, average=0.002 s; distance=0 kB, estimate=0 kB; lsn=0/201DBF0, redo lsn=0/201DBF0
+2025-12-30 11:45:15.638 WIB [15470] LOG:  database system is ready to accept connections
+2025-12-30 11:45:16.424 WIB [15545] FATAL:  lock file "postmaster.pid" already exists
+2025-12-30 11:45:16.424 WIB [15545] HINT:  Is another postmaster (PID 15470) running in data directory "/data/data/com.termux/files/home/postgresql"?
+2025-12-30 11:45:30.286 WIB [15852] FATAL:  lock file "postmaster.pid" already exists
+2025-12-30 11:45:30.286 WIB [15852] HINT:  Is another postmaster (PID 15470) running in data directory "/data/data/com.termux/files/home/postgresql"?
+2025-12-30 11:45:31.191 WIB [15875] FATAL:  lock file "postmaster.pid" already exists
+2025-12-30 11:45:31.191 WIB [15875] HINT:  Is another postmaster (PID 15470) running in data directory "/data/data/com.termux/files/home/postgresql"?
+2025-12-30 11:46:19.713 WIB [16850] FATAL:  lock file "postmaster.pid" already exists
+2025-12-30 11:46:19.713 WIB [16850] HINT:  Is another postmaster (PID 15470) running in data directory "/data/data/com.termux/files/home/postgresql"?
+2025-12-30 11:46:20.514 WIB [16878] FATAL:  lock file "postmaster.pid" already exists
+2025-12-30 11:46:20.514 WIB [16878] HINT:  Is another postmaster (PID 15470) running in data directory "/data/data/com.termux/files/home/postgresql"?

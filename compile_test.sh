@@ -28,24 +28,28 @@ ld -r -b binary build/resources/font/Noto_Sans/Default_Font.ttf \
 
 echo -e "${YELLOW}Compiling executables.${NC}"
 
-g++ -c src/gui/window.cpp -o build/window.o \
+g++ \
+ -L../SDL3 -L../SDL3_ttf -lSDL3_image -lSDL3_ttf -lSDL3 `pkg-config --cflags --libs sdl3 sdl3-image` \
  -Wall -Wextra -pedantic \
- -L../SDL3 -L../SDL3_ttf -lSDL3_ttf -lSDL3
+ -c src/gui/window.cpp \
+ -o build/window.o
 
-g++ -c src/gui/HSButton.cpp -o build/HSButton.o \
+g++ \
+ -L../SDL3 -L../SDL3_ttf -lSDL3_image -lSDL3_ttf -lSDL3 `pkg-config --cflags --libs sdl3 sdl3-image` \
+ -c src/gui/HSButton.cpp -o build/HSButton.o \
  -Wall -Wextra -pedantic \
- -L../SDL3 -L../SDL3_ttf -lSDL3_ttf -lSDL3
 
 g++ -c src/main.cpp -o build/main.o \
  -Wall -Wextra -pedantic \
- -I ./src -L../SDL3 -L../SDL3_ttf -lSDL3_ttf -lSDL3
+ -I ./src -L../SDL3 -lSDL3_image -L../SDL3_ttf -lSDL3_ttf -lSDL3
 
 echo -e "${YELLOW}Basically linking everything together at this point!${NC}"
 
 cd build
+ln -s ../src/res res
 
 g++ *.o resources/*.o -o test_build \
- -L../SDL3 -L../SDL3_ttf -lSDL3_ttf -lSDL3 `pkg-config --cflags --libs sdl3`
+ -L../SDL3 -L../SDL3_ttf -lSDL3_ttf -lSDL3 `pkg-config --cflags --libs sdl3 sdl3-image`
 
 echo -e "${GREEN}Done!${NC}"
 

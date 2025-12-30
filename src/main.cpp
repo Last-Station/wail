@@ -1,12 +1,13 @@
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
+#include <SDL3_image/SDL_image.h>
 #include <SDL3_ttf/SDL_ttf.h>
 
 #include <threads.h>
 #include <miko.h>
 
 // src/gui/MainWindow.cpp
-int MainWindow(void (*)(void *));
+int MainWindow(void (*on_create)(void *data), void (*on_loop)(void *data));
 
 void cleanup() {
 	TTF_Quit();
@@ -111,7 +112,31 @@ void mapgen(){
 	struct map_entity *entity = entity_new(&map, biome_forest);
 }
 
-int main(){
+void on_create(void *data){
+	struct graphics *gdata = (struct graphics *) data;
+	struct entity_op_data op_data = {
+		.map = &map,
+		.entity = NULL,
+		.graphics = gdata
+	};
+
+	for(int i = 0; i < entity_op_size; i++){
+		struct entity_op *op = &entity_op[i];
+		if(op->on_init == NULL)
+			continue ;
+
+		op->on_init(&op_data);
+	}
+}
+
+int main(){/*
+	IMG_Init(IMG_INIT_JPG
+		| IMG_INIT_PNG
+		| IMG_INIT_TIF
+		| IMG_INIT_WEBP
+		| IMG_INIT_JXL
+		| IMG_INIT_AVIF
+	);*/
 	map_new(&map);
 
 	OP_INCLUDE();
@@ -135,17 +160,9 @@ int main(){
 		//printf("%i) %i\n", i, map.entities[i].type);
 	}*/
 
-	for(i = 0; i < entity_op_size; i++){
-		struct entity_op *op = &entity_op[i];
-		if(op->on_init == NULL)
-			continue ;
-
-		op->on_init(NULL);
-	}
-
 	mapgen();
 
-	if(MainWindow(on_loop) != 0) {
+	if(MainWindow(on_create, on_loop) != 0) {
 		cleanup();
 		return 1;
 	}

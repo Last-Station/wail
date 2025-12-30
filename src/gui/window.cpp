@@ -13,6 +13,7 @@
 
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
+#include <SDL3_image/SDL_image.h>
 #include <SDL3_ttf/SDL_ttf.h>
 #include "font.h"
 #include "window.h"
@@ -60,26 +61,31 @@ struct graphics {
 	SDL_Renderer *renderer;
 };
 
-int MainWindow(void (*on_loop)(void *data)){
+int MainWindow(void (*on_create)(void *data), void (*on_loop)(void *data)){
 	bool SDL_tasks_done {0};
-	if (!SDL_Init(SDL_INIT_VIDEO)) {
-	SDL_Log("Couldn't initialize SDL: %s", SDL_GetError());
-	return 1;
+	if(!SDL_Init(SDL_INIT_VIDEO)) {
+		SDL_Log("Couldn't initialize SDL: %s", SDL_GetError());
+
+		return 1;
 	}
 
-	if (!TTF_Init()) {
-	SDL_Log("Couldn't initialize TTF: %s", SDL_GetError());
-	return 1;
+	if(!TTF_Init()) {
+		SDL_Log("Couldn't initialize TTF: %s", SDL_GetError());
+
+		return 1;
 	}
+
+	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 0);
+	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 0);
 
 	// TODO (create window with paramaters from config file)
 	if (!SDL_CreateWindowAndRenderer (
-	PROGRAM_NAME " " PROGRAM_VERSION,
-	WINDOW_WIDTH, WINDOW_HEIGHT,
-	SDL_WINDOW_RESIZABLE,
-	&window, &renderer)) {
-	    SDL_Log("Couldn't create window/renderer: %s", SDL_GetError());
-	    return 1;
+		PROGRAM_NAME " " PROGRAM_VERSION,
+		WINDOW_WIDTH, WINDOW_HEIGHT,
+		SDL_WINDOW_RESIZABLE,
+	&window, &renderer)){
+		SDL_Log("Couldn't create window/renderer: %s", SDL_GetError());
+		return 1;
 	}
 
 	struct graphics gdata = {
@@ -87,24 +93,26 @@ int MainWindow(void (*on_loop)(void *data)){
 		.renderer = renderer
 	};
 
+	on_create(&gdata);
+
 	// Main program loop
 	while (!SDL_tasks_done) {
-	SDL_Event event;
+		SDL_Event event;
 
-	while (SDL_PollEvent(&event)) {
-	    if (event.type == SDL_EVENT_QUIT) {
-	        SDL_tasks_done = 1;
-	    }
-	}
+		while (SDL_PollEvent(&event)) {
+			if (event.type == SDL_EVENT_QUIT) {
+				SDL_tasks_done = 1;
+			}
+		}
 
-	// Clear the window making the background transparent
-	//SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-	//SDL_RenderClear(renderer);
+		// Clear the window making the background transparent
+		//SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+		//SDL_RenderClear(renderer);
 
-	on_loop(&gdata);
+		on_loop(&gdata);
 
-	SDL_RenderPresent(renderer);
-	SDL_Delay(10); // temporary CPU limiter WARNING
+		SDL_RenderPresent(renderer);
+		SDL_Delay(10); // temporary CPU limiter WARNING
 	}
 
 	return 0;
