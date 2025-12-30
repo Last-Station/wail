@@ -1,3 +1,4 @@
+#include <cstdio>
 #include <miko.h>
 extern struct entity_op entity_op[entity_op_size];
 
