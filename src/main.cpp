@@ -4,7 +4,6 @@
 
 #include <threads.h>
 #include <miko.h>
-#include <op.h>
 
 // src/gui/MainWindow.cpp
 int MainWindow(void (*)(void *));
@@ -28,13 +27,19 @@ struct map_entity entity_type_fox = {
 
 struct map map;
 
+void (*entity_op[entity_op_size])(struct map *, void *) = {
+	0
+};
+
+#include <op.h>
+
 int main(){ // for testing only (TODO)
 	map_new(&map);
 
 	OP_INCLUDE();
 
 	for(int i = 0; i < 32; i++){
-		map_entities_add(&map, &entity_type_fox);
+		map_entities_add(&map, &biome_forest);
 	}
 
 	map_entities_unset(&map, 12);
@@ -59,11 +64,16 @@ int main(){ // for testing only (TODO)
 	return 0;
 }
 
-void (*entity_op[entity_op_size])(struct map, struct map_entity) = {
-	0
-};
-
 int on_entity(struct map_entity *entity){
+	void (*f)(struct map *, void *) = entity_op[entity->type];
+	if(f == NULL){
+		printf("Warning: Unhandled entity type (%i)\n", entity->type);
+
+		return 1;
+	}
+
+	f(&map, entity);
+
 	return 0;
 }
 
