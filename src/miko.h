@@ -59,9 +59,13 @@ struct map_position {
 	float z;
 };
 
+struct map_entity_action_data {
+	char *data;
+};
+
 struct map_entity_action {
 	char *name;
-	void (*call)(void *);
+	void (*call)(struct map_entity_action_data *);
 };
 
 struct map_entity {
@@ -77,6 +81,11 @@ struct map_entity {
 
 struct map {
 	struct map_entity *entities;
+};
+
+struct fps_callback {
+	void (*f)(void *);
+	void *data;
 };
 
 int map_new(struct map *);
@@ -96,5 +105,13 @@ void map_entity_translate(
 
 void map_position_to_frect(struct map_position *, SDL_FRect *, float, float);
 unsigned long long get_time();
+
+uint64_t fps_get_time();
+void fps_call(struct fps_callback *);
+void fps_push(struct fps_callback **, void (*)(void *), void *);
+
+void fps12(void (*)(void *), void *);
+void fps24(void (*)(void *), void *);
+void fps30(void (*)(void *), void *);
 
 #endif

@@ -1,3 +1,5 @@
+#include <stdint.h>
+
 struct map_entity *map_center;
 
 size_t map_width = 4096;
@@ -236,7 +238,78 @@ void map_position_to_frect(
 	frect->h = height;
 }
 
-unsigned long long get_time(){
-	//return (unsigned long long) pt_now();
-	return 0;
+void ffpsnull(void *data){ return ; }
+void (*fpsnull)(void *) = &ffpsnull;
+
+/*void (**fps12flist)(void *) = { fpsnull };
+void (**fps24flist)(void *) = { fpsnull };
+void (**fps30flist)(void *) = { fpsnull };*/
+
+struct fps_callback *fps12list = NULL;
+struct fps_callback *fps24list = NULL;
+struct fps_callback *fps30list = NULL;
+
+uint64_t fps12last = 0;
+uint64_t fps24last = 0;
+uint64_t fps30last = 0;
+
+void fps_push(struct fps_callback **list, void (*f)(void *), void *data){
+	if(f == NULL)
+		return ;
+
+	size_t size = 0;
+	while(list[0] != NULL && list[0][size].f != fpsnull){
+		size++;
+	}
+
+	struct fps_callback *np = (struct fps_callback *) realloc(
+		list[0],
+		sizeof(struct fps_callback)*(size + 2)
+	);
+
+	if(np == NULL){
+		exit(1); // TODO: Out of Memory
+	}
+
+	list[0] = np;
+	list[0][size].f = f;
+	list[0][size].data = data;
+	list[0][size + 1].f = fpsnull;
+}
+
+void fps_call(struct fps_callback *list){
+	size_t size = 0;
+	while(list != NULL && list[size].f != fpsnull){
+		list[size].f(list[size].data);
+
+		size++;
+	}
+}
+
+uint64_t fps_get_time(){
+	return (uint64_t) SDL_GetTicks();
+}
+
+void fps12(void (*f)(void *), void *data){
+	fps_push(&fps12list, f, data);
+
+	if(f != NULL)
+		return ;
+
+	uint64_t now = fps_get_time();
+	uint64_t ticks = (now - fps12last)/83;
+	if(ticks > 0){
+		for(uint64_t i = 0; i < ticks; i++)
+			fps_call(fps12list);
+
+		fps12last = now;
+	}
+}
+
+void fps24(void (*f)(void *), void *data){
+	return ;
+}
+
+void fps30(void (*f)(void *), void *data){
+	return ;
 }

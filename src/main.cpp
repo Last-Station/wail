@@ -67,6 +67,9 @@ int on_tick(struct graphics *graphics){
 void on_loop(void *data){
 	struct graphics *gdata = (struct graphics *) data;
 	on_tick(gdata);
+	fps12(NULL, NULL);
+	fps24(NULL, NULL);
+	fps30(NULL, NULL);
 }
 
 unsigned int entity_new_count = 0;
