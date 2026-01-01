@@ -59,9 +59,9 @@ struct animation {
 };
 
 struct map_position {
-	float x;
-	float y;
-	float z;
+	double x;
+	double y;
+	double z;
 };
 
 struct map_entity_action_data {
@@ -128,5 +128,12 @@ size_t array_len(struct array_element *);
 void array_push(struct array_element **, struct array_element *);
 
 void timing(tsBSpline *spline, float pos, float *result);
+void xyz_to_degrad(double, double, double, double *);
+void degrad_to_xyz(double, double, double, double *);
+void map_entity_go(struct map_entity *,
+	struct map_position *,
+	struct map_position *,
+	double
+);
 
 #endif

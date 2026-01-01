@@ -26,13 +26,15 @@ static struct slime_data {
 	size_t age;
 	size_t ticks;
 	size_t frame;
-	float directionX;
-	float directionY;
-	float y;
-	float x;
-	float xmov;
+	double directionX;
+	double directionY;
+	double y;
+	double x;
+	double z;
+	double xmov;
 };
 
+int c = 0;
 static void on_fps12(struct entity_op_data *data){
 	struct texture texture = textures[0];
 	struct map_entity *entity = data->entity;
@@ -42,18 +44,46 @@ static void on_fps12(struct entity_op_data *data){
 		: 1
 	;
 
-	float xmov = 4 * slime->xmov;
+	double xmov = 4 * slime->xmov;
+	struct map_entity fake;
+	fake.position->x = slime->x;
+	fake.position->y = slime->y;
+	fake.position->z = slime->z;
+
+	struct map_position dest = {
+		.x = 100,
+		.y = 200,
+		.z = 0
+	};
+
+	struct map_position rest = {
+		.x = 0,
+		.y = 0,
+		.z = 0
+	};
 
 	if(slime->frame > 49){
-		if(slime->frame > 70){
+		/*if(slime->frame > 70){
 			map_entity_move(entity, xmov * directionX, 0, 0);
 		}
 
-		map_entity_move(entity, (xmov/2) * directionX, 0, 0);
-		slime->x = entity->position->x;
+		map_entity_move(entity, (xmov/2) * directionX, 0, 0);*/
+		map_entity_go(&fake, &dest, &rest, 10);
+		//printf("[rest ] %f %f %f\n", rest.x, rest.y, rest.z);
+		//printf("[slime] %f %f %f\n", slime->x, slime->y, slime->z);
+
+		if(slime->x > rest.x)
+			slime->directionX = (double) 1;
+		else
+			slime->directionX = (double) 0;
+
+		/*slime->x = rest.x;
+		slime->y = rest.y;
+		slime->z = rest.z;*/
+		slime->x += rest.x;
+		slime->y += rest.y;
 	} else if(slime->frame < 10){
-		slime->directionX = ((float) SDL_rand(2));
-		slime->xmov = ((float) (SDL_rand(20) + 10))/10;
+		slime->xmov = ((double) (SDL_rand(20) + 10))/10;
 	}
 }
 
@@ -119,7 +149,7 @@ static void on_tick(struct entity_op_data *data){
 			progress = 1.0f
 		;
 		timing(NULL, progress, ypos);
-		printf("%f %f\n", progress, ypos[0], ypos[1]);
+		//printf("%f %f\n", progress, ypos[0], ypos[1]);
 		entity->position->y = slime->y - ypos[0]/10.0f;
 
 		slime->frame = 50;
@@ -141,13 +171,13 @@ static void on_init(struct entity_op_data *data){
 }
 
 static void on_new(struct entity_op_data *data){
-	printf("%i CREATED\n", data->entity->type);
+	//printf("%i CREATED\n", data->entity->type);
 	struct map_entity *entity = data->entity;
 	struct slime_data *slime =
 		(struct slime_data *) malloc(sizeof(struct slime_data))
 	;
-	slime->x = 300;
-	slime->y = 100;
+	slime->x = 0;
+	slime->y = 0;
 	slime->age = 0;
 	slime->directionX = 1;
 	slime->directionY = 1;
@@ -176,7 +206,7 @@ void op_slime(){
 	for(float i = 0.0f; i < 1.0f; i += 0.01f){
 		timing(NULL, i, pos);
 
-		printf("[ %f, %f ]\n", pos[0], pos[1]);
+		//printf("[ %f, %f ]\n", pos[0], pos[1]);
 	}
 
 	/*size_t i = 0;

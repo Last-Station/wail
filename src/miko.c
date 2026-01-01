@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <math.h>
 
 struct map_entity *map_center;
 
@@ -215,6 +216,93 @@ void map_entity_move(
 	entity->position->z += dz;
 }
 
+void degrad_to_xyz(
+	double radius,
+	double theta,
+	double phi,
+	double *output
+){
+	double theta_rad = theta * M_PI / 180.0;
+	double phi_rad = phi * M_PI / 180.0;
+
+	output[0] = radius * sin(phi_rad) * cos(theta_rad);
+	output[1] = radius * sin(phi_rad) * sin(theta_rad);
+	output[2] = radius * cos(phi_rad);
+}
+
+void xyz_to_degrad(
+	double x,
+	double y,
+	double z,
+
+	double *output
+){
+	double radius = sqrt((x * x) + (y * y) + (z * z));
+	if(radius == 0){
+		output[0] = output[1] = output[2] = 0.0;
+
+		return ;
+	}
+
+	double theta = atan2(y, x);
+	double phi = acos(z / radius);
+
+	output[0] = radius;
+	output[1] = theta * (180.0 / M_PI);
+	output[2] = phi * (180.0 / M_PI);
+}
+
+/*
+	Go `dist` distance to dx, dy, dz
+*/
+
+void map_entity_go_legacy(struct map_entity *entity,
+	struct map_position *position,
+	struct map_position *result,
+	double dist
+){
+	double px = (double) position->x;
+	double py = (double) position->y;
+	double pz = (double) position->z;
+
+	px = px - entity->position->x;
+	py = py - entity->position->y;
+	pz = pz - entity->position->z;
+
+	double out[3];
+	xyz_to_degrad(px, py, pz, out);
+	printf("RAD %f THETA %f PHI %f\n", out[0], out[1], out[2]);
+	degrad_to_xyz(dist, out[1], out[2], out);
+
+	result->x = entity->position->x + out[0];
+	result->y = entity->position->y + out[1];
+	result->z = entity->position->z + out[2];
+
+	printf("[p3    ] %f %f %f\n", px, py, pz);
+	printf("[entity] %f %f %f\n", entity->position->x, entity->position->y, entity->position->z);
+	printf("[output] %f %f %f\n", result->x, result->y, result->z);
+}
+
+// Thanks Gemini for this new function
+void map_entity_go(struct map_entity *entity,
+	struct map_position *position,
+	struct map_position *result,
+	double dist
+){
+	double dx = position->x - entity->position->x;
+	double dy = position->y - entity->position->y;
+	double dz = position->z - entity->position->z;
+	double distance = sqrt(dx*dx + dy*dy + dz*dz);
+
+	if (distance > 0.1) {
+		double speed = dist;
+
+		result->x = (dx / distance) * speed;
+		result->y = (dy / distance) * speed;
+		result->z = (dz / distance) * speed;
+	}
+}
+
 void map_entity_translate(
 	struct map_entity *center,
 	struct map_entity *entity,
@@ -412,7 +500,7 @@ void timing(tsBSpline *spline, float pos, float *result){
 		spline = &dspline;
 		//error = ts_bspline_new(3, 2, 4, TS_CLAMPED, spline, &status);
 		error = ts_bspline_new(4, 2, 3, TS_CLAMPED, spline, &status);
-		printf("%i\n", error);
+		//printf("%i\n", error);
 
 		tsReal ctrlp[] = {
 			0.0,
@@ -444,7 +532,7 @@ void timing(tsBSpline *spline, float pos, float *result){
 	tsDeBoorNet net;
 	ts_bspline_eval(spline, u, &net, &status);
 
-	printf("%f %f | %f\n", min, max, u);
+	//printf("%f %f | %f\n", min, max, u);
 
 	result[0] = ts_deboornet_result_ptr(&net)[0];
 	result[1] = ts_deboornet_result_ptr(&net)[1];
