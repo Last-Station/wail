@@ -314,13 +314,41 @@ void fps12(void (*f)(void *, void *), void *user, void *data){
 
 // TODO: Implement for fps 24 and fps 30
 void fps24(void (*f)(void *, void *), void *user, void *data){
-	//printf("WARNING: miko.c -> fps24 is unimplemented!\n");
+	fps_push(&fps24list, f, user, data);
+
+	if(f != NULL)
+		return ;
+
+	uint64_t now = fps_get_time();
+	uint64_t ticks = (now - fps24last)/41;
+
+	if(ticks > 0){
+		for(uint64_t i = 0; i < ticks; i++){
+			fps_call(fps24list);
+		}
+
+		fps24last = now;
+	}
 
 	return ;
 }
 
 void fps30(void (*f)(void *, void *), void *user, void *data){
-	//printf("WARNING: miko.c -> fps30 is unimplemented!\n");
+	fps_push(&fps30list, f, user, data);
+
+	if(f != NULL)
+		return ;
+
+	uint64_t now = fps_get_time();
+	uint64_t ticks = (now - fps30last)/33;
+
+	if(ticks > 0){
+		for(uint64_t i = 0; i < ticks; i++){
+			fps_call(fps30list);
+		}
+
+		fps30last = now;
+	}
 
 	return ;
 }
@@ -373,4 +401,53 @@ void array_push(struct array_element **list, struct array_element *element){
 	ns[count + 1].data = NULL;
 
 	list[0] = ns;
+}
+
+void timing(tsBSpline *spline, float pos, float *result){
+	tsStatus status;
+	tsBSpline dspline;
+	tsError error;
+
+	if(spline == NULL){
+		spline = &dspline;
+		//error = ts_bspline_new(3, 2, 4, TS_CLAMPED, spline, &status);
+		error = ts_bspline_new(4, 2, 3, TS_CLAMPED, spline, &status);
+		printf("%i\n", error);
+
+		tsReal ctrlp[] = {
+			0.0,
+			500.0,
+			1000.0,
+			1000.0,
+			1000.0,
+			1000.0,
+			0.0
+		};
+
+		tsError err = ts_bspline_set_control_points(
+			spline,
+			ctrlp,
+			&status
+		);
+		if (err != TS_SUCCESS) {
+			// TODO:
+			// If this fails, your points remain zero
+		}
+	}
+
+	tsReal min;
+	tsReal max;
+	ts_bspline_domain(spline, &min, &max);
+
+	float u = min + ((max - min) * pos);
+
+	tsDeBoorNet net;
+	ts_bspline_eval(spline, u, &net, &status);
+
+	printf("%f %f | %f\n", min, max, u);
+
+	result[0] = ts_deboornet_result_ptr(&net)[0];
+	result[1] = ts_deboornet_result_ptr(&net)[1];
+
+	ts_deboornet_free(&net);
 }

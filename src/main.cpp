@@ -84,6 +84,44 @@ void on_fps12(void *user, void *data){
 	}
 }
 
+int on_fps24_entity(struct map_entity *entity, struct graphics *graphics){
+	struct entity_op f = entity_op[entity->type];
+	if(f.on_fps24 == NULL){
+		return 1;
+	}
+
+	entity_op_trigger(f.on_fps24, entity, graphics);
+
+	return 0;
+}
+
+void on_fps24(void *user, void *data){
+	struct graphics *graphics = (struct graphics *) data;
+	size_t count = map_entities_len(&map);
+	for(int i = 0; i < count; i++){
+		on_fps24_entity(&map.entities[i], graphics);
+	}
+}
+
+int on_fps30_entity(struct map_entity *entity, struct graphics *graphics){
+	struct entity_op f = entity_op[entity->type];
+	if(f.on_fps30 == NULL){
+		return 1;
+	}
+
+	entity_op_trigger(f.on_fps30, entity, graphics);
+
+	return 0;
+}
+
+void on_fps30(void *user, void *data){
+	struct graphics *graphics = (struct graphics *) data;
+	size_t count = map_entities_len(&map);
+	for(int i = 0; i < count; i++){
+		on_fps30_entity(&map.entities[i], graphics);
+	}
+}
+
 int on_tick(struct graphics *graphics){
 	size_t count = map_entities_len(&map);
 	for(int i = 0; i < count; i++){
@@ -146,6 +184,8 @@ void on_create(void *data){
 	}
 
 	fps12(&on_fps12, NULL, gdata);
+	fps24(&on_fps24, NULL, gdata);
+	fps30(&on_fps30, NULL, gdata);
 }
 
 int main(){/*

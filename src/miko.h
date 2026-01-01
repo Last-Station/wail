@@ -127,4 +127,6 @@ struct array_element {
 size_t array_len(struct array_element *);
 void array_push(struct array_element **, struct array_element *);
 
+void timing(tsBSpline *spline, float pos, float *result);
+
 #endif

@@ -15,7 +15,7 @@ LINKING_FILE_PATHS="-I../bin/SDL_bin/include/ -I../bin/SDL_ttf_bin/include/ \
 		-L../bin/SDL_image_bin/lib/ \
 		-I../src"
 
-LIB_NAMES="-lSDL3_image -lSDL3_ttf -lSDL3"
+LIB_NAMES="-lSDL3_image -lSDL3_ttf -lSDL3 -ltinyspline"
 
 COMPILER_FLAGS="-Wall -Wextra -pedantic"
 
