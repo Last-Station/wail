@@ -34,15 +34,21 @@ const fs = require("fs/promises");
 new Promise(async function(res){
 	res();
 
+	const movup = process.env.MOVUP;
+	if(movup){
+		for(let i = 0; i < Number(movup); i++)
+			process.stdout.write("\x1b[3A");
+	}
+
 	let entries = [
 		...(await fs.readdir("op")).filter(f => f.endsWith(".c"))
 	];
 
 	console.log([
-		"─".repeat(process.stdout.columns),
-		"	󰚗 \x1b[96mCompilation\x1b[0m Summary",
-		"─".repeat(process.stdout.columns)
-	].join('\n'))
+		"─".repeat(process.stdout.columns) + "\r",
+		"	┤ 󰚗 \x1b[96mCompilation\x1b[0m Summary ├\n",
+		//"─".repeat(process.stdout.columns)
+	].join(''))
 
 	entries.map(entry => exec(`echo ${entry} \/\/ &&
 g++ -I./ \\

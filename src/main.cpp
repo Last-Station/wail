@@ -193,6 +193,8 @@ void on_create(void *data){
 	fps30(&on_fps30, NULL, gdata);
 }
 
+// TODO: Remove commented development code
+
 int main(){/*
 	IMG_Init(IMG_INIT_JPG
 		| IMG_INIT_PNG

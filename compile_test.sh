@@ -28,17 +28,18 @@ NC='\033[0m'
 WAIT="";
 DONE="";
 
-alias sleep=':'
+shopt -s expand_aliases
+alias osleep=':'
 
 # Yes, this is all kinda hardcoded, live with it.
 echo -ne "${YELLOW}${WAIT} Removing old build.${NC}"
 rm -rf build
-sleep 1
+osleep 1
 echo -ne "\r${BLUE}${DONE} Removing old build.${NC}\n"
 
 
 echo -ne "${YELLOW}${WAIT} Creating build directory.${NC}"
-sleep 1
+osleep 1
 mkdir -p build/resources/font/Noto_Sans
 mkdir build/op
 echo -ne "\r${BLUE}${DONE} Creating build directory.${NC}\n"
@@ -53,20 +54,21 @@ ln -s '../../../../resources/font/Noto_Sans/NotoSans-Italic-VariableFont_wdth,wg
 
 ln -s ../src/res build/res
 
-sleep 1
+osleep 1
 echo -ne "\r${BLUE}${DONE} Creating links.${NC}\n"
 echo -ne "${YELLOW}${WAIT} Compiling resources.${NC}"
 
 ld -r -b binary build/resources/font/Noto_Sans/Default_Font.ttf \
  -o build/resources/Default_Font.ttf.o
 
-sleep 1
+osleep 1
 echo -ne "\r${BLUE}${DONE} Compiling resources.${NC}\n"
 
 # THIS .JS IS FAILING ON PC (FIX/DELETE?)
 # Run this after you installed nodejs -Miko
+node print_todos.js
 cd src
-node op_gen.js
+MOVUP=1 node op_gen.js
 mv op/*.o ../build/op
 #echo -e "$(cat bootup.txt)" > bootup
 cd ..
@@ -89,7 +91,7 @@ g++ $INCLUDE_LIB_PATHS $LIB_NAMES $COMPILER_FLAGS \
 
 echo -ne "${YELLOW}${WAIT} Compiling executables.${NC}"
 
-sleep 1
+osleep 1
 echo -ne "\r${BLUE}${DONE} Compiling executables.${NC}\n"
 echo -ne "${YELLOW}${WAIT} Generating final executable${NC}"
 
@@ -98,7 +100,7 @@ cd build
 g++ $LINKING_FILE_PATHS $LIB_NAMES $COMPILER_FLAGS \
 	*.o resources/*.o op/*.o -o test_build >> compile_log 2>&1
 
-sleep 1
+osleep 1
 echo -ne "\r${BLUE}${DONE} Generating final executable${NC}\n"
 
 exit
