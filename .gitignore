@@ -3,6 +3,7 @@ ignore
 bin
 logfile
 build/
+compile_log
 
 # Prerequisites
 *.d
