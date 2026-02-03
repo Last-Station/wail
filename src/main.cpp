@@ -9,10 +9,13 @@
 #include <miko.h>
 #include <miko.c>
 
-#define INCBIN_PREFIX
-#include <incbin.h>
 
-INCTXT(bootup, "bootup");
+// src in resources/bootup.txt, symlinked into build dir
+extern char bootup_txt_data[] asm("_binary_build_resources_bootup_txt_start");
+extern char bootup_txt_end[] asm("_binary_build_resources_bootup_txt_end");
+extern char bootup_txt_size[] asm("_binary_build_resources_bootup_txt_size");
+size_t txt_size = (size_t)(bootup_txt_size);
+
 
 // src/gui/MainWindow.cpp
 int MainWindow(void (*on_create)(void *data), void (*on_loop)(void *data));
@@ -193,40 +196,15 @@ void on_create(void *data){
 	fps30(&on_fps30, NULL, gdata);
 }
 
-// TODO: Remove commented development code
 
-int main(){/*
-	IMG_Init(IMG_INIT_JPG
-		| IMG_INIT_PNG
-		| IMG_INIT_TIF
-		| IMG_INIT_WEBP
-		| IMG_INIT_JXL
-		| IMG_INIT_AVIF
-	);*/
+int main(){
 	map_new(&map);
 
 	OP_INCLUDE();
 
-	int i = 0;/*
-	for(i = 0; i < 32; i++){
-		map_new(&map, biome_forest);
-	}
+	// Print bootup "art"
+	printf("%.*s", (int)txt_size, bootup_txt_data);
 
-	map_entities_unset(&map, 12);
-
-
-	for(i = 0; i < map_entities_len(&map); i++){
-		//printf("%i) %i\n", i, map.entities[i].type);
-	}
-
-	printf("  === DEFRAG ===\n");
-	map_entities_defrag(&map);
-
-	for(i = 0; i < map_entities_len(&map); i++){
-		//printf("%i) %i\n", i, map.entities[i].type);
-	}*/
-
-	printf("%s\n", bootupData);
 	mapgen();
 
 	if(MainWindow(on_create, on_loop) != 0) {
