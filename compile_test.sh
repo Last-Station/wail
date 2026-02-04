@@ -41,10 +41,13 @@ ln -s '../../../../src/res/font/Noto_Sans/NotoSans-Italic-VariableFont_wdth,wght
 ln -s '../../src/res/bootup.txt' \
 	build/resources/bootup.txt
 
+# These can be ignored if they are installed on the system
+set +e
 cp -P bin/SDL_bin/lib/*.so* build/lib
 cp -P bin/SDL_ttf_bin/lib/*.so* build/lib
 cp -P bin/SDL_image_bin/lib/*.so* build/lib
-
+set -e
+# Exit on error re-enabled
 
 echo -e "${YELLOW}Compiling resources.${NC}"
 
