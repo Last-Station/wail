@@ -7,7 +7,7 @@ INCLUDE_LIB_PATHS="-Ibin/SDL_bin/include/ -Ibin/SDL_ttf_bin/include/ \
 		-I./src"
 
 LINKING_FILE_PATHS="-L../bin/SDL_bin/lib/ -L../bin/SDL_ttf_bin/lib/ \
-		-L../bin/SDL_image_bin/lib/ -L../bin/tinyspline_bin/lib64/"
+		-L../bin/SDL_image_bin/lib/"
 
 LIB_NAMES="-lSDL3_image -lSDL3_ttf -lSDL3"
 
@@ -46,7 +46,7 @@ set +e
 cp -P bin/SDL_bin/lib/*.so* build/lib
 cp -P bin/SDL_ttf_bin/lib/*.so* build/lib
 cp -P bin/SDL_image_bin/lib/*.so* build/lib
-set -e
+#set -e
 # Exit on error re-enabled
 
 echo -e "${YELLOW}Compiling resources.${NC}"
@@ -79,11 +79,20 @@ g++ $INCLUDE_LIB_PATHS $LIB_NAMES $COMPILER_FLAGS \
 echo -e "${YELLOW}Basically linking everything together at this point!${NC}"
 
 cd build
+
+# A rather dirty way to try to link the code in one way or try in another if the previous failed
+# the difference is the presence or absence of ../bin/tinyspline_bin/lib64/libtinyspline.a
 g++ *.o resources/*.o op/*.o \
 	-Wl,-rpath '$ORIGIN/lib' \
 	../bin/tinyspline_bin/lib64/libtinyspline.a \
 	$LINKING_FILE_PATHS $LIB_NAMES $COMPILER_FLAGS \
-	-o test_build
+	-o test_build || \
+{ echo -e "${YELLOW}Linking using provided libs failed, trying system libs!${NC}" ; \
+g++ *.o resources/*.o op/*.o \
+	-Wl,-rpath '$ORIGIN/lib' -ltinyspline \
+	$LINKING_FILE_PATHS $LIB_NAMES $COMPILER_FLAGS \
+	-o test_build ; }
+
 
 echo -e "${GREEN}Done!${NC}"
 
