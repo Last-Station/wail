@@ -539,3 +539,8 @@ void timing(tsBSpline *spline, float pos, float *result){
 
 	ts_deboornet_free(&net);
 }
+
+void map_entity_draw(struct map_entity *entity){
+	// TODO: What the hell
+	//entity->animation->texture->animation->framws
+}
