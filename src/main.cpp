@@ -172,7 +172,7 @@ struct map_entity *entity_new(struct map *map,
 	struct map_entity entity = {
 		.id = entity_new_count++,
 		.type = type,
-		.custom = 0
+		.custom = 0,
 
 		.animation = animation,
 		.graphics = graphics,
