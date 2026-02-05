@@ -30,6 +30,7 @@ rm -rf build
 echo -e "${YELLOW}Creating build directory.${NC}"
 mkdir -p build/resources/font/Noto_Sans
 mkdir build/op
+mkdir build/routine
 mkdir build/lib
 
 
@@ -64,6 +65,7 @@ echo -e "${YELLOW}Compiling executables.${NC}"
 cd src
 MOVUP=1 node op_gen.js
 mv op/*.o ../build/op
+mv routine/*.o ../build/routine
 cd ..
 
 g++ $INCLUDE_LIB_PATHS $LIB_NAMES $COMPILER_FLAGS \
@@ -97,20 +99,20 @@ echo "$USE_SYSLIB"
 
 if [ "$USE_SYSLIB" -eq 1 ]; then
 echo -e "${YELLOW}Using system lib (-s)"
-g++ *.o resources/*.o op/*.o \
+g++ *.o resources/*.o op/*.o routine/*.o \
 	-Wl,-rpath "$ORIGIN/lib" -ltinyspline \
 	$LINKING_FILE_PATHS $LIB_NAMES $COMPILER_FLAGS \
 	-o test_build ;
 else
 # A rather dirty way to try to link the code in one way or try in another if the previous failed
 # the difference is the presence or absence of ../bin/tinyspline_bin/lib64/libtinyspline.a
-g++ *.o resources/*.o op/*.o \
+g++ *.o resources/*.o op/*.o routine/*.o \
 	-Wl,-rpath "$ORIGIN/lib" \
 	../bin/tinyspline_bin/lib64/libtinyspline.a \
 	$LINKING_FILE_PATHS $LIB_NAMES $COMPILER_FLAGS \
 	-o test_build || \
 { echo -e "${YELLOW}Linking using provided libs failed, trying system libs!${NC}" ; \
-g++ *.o resources/*.o op/*.o \
+g++ *.o resources/*.o op/*.o routine/*.o \
 	-Wl,-rpath "$ORIGIN/lib" -ltinyspline \
 	$LINKING_FILE_PATHS $LIB_NAMES $COMPILER_FLAGS \
 	-o test_build ; }

@@ -42,6 +42,7 @@ struct entity_op entity_op[entity_op_size] = {
 	0
 };
 
+#include <routine.h>
 #include <op.h>
 
 int entity_op_trigger(
@@ -244,6 +245,7 @@ void on_create(void *data){
 
 
 int main(){
+	ROUTINE_INCLUDE();
 	OP_INCLUDE();
 
 	// Print bootup "art"

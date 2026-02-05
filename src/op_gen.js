@@ -70,3 +70,37 @@ new Promise(async function(res){
 		.join('\n')
 	);
 })
+
+new Promise(async function(res){
+	res();
+
+	const movup = process.env.MOVUP;
+	if(movup){
+		for(let i = 0; i < Number(movup); i++)
+			process.stdout.write("\x1b[3A");
+	}
+
+	let entries = [
+		...(await fs.readdir("routine")).filter(f => f.endsWith(".c"))
+	];
+
+	entries.map(entry => exec(`echo ${entry} \/\/ &&
+		g++ -I./ -fdiagnostics-color=always \
+		-I../bin/SDL_bin/include/ -I../bin/SDL_ttf_bin/include/ \
+		-I../bin/SDL_image_bin/include/ -I../bin/tinyspline_bin/include \
+		-Wall -Wextra -pedantic \\
+ -c routine/${entry.slice(0, -2)}.c \\
+ -o routine/${entry.slice(0, -2)}.o
+	`, summarize));
+
+	let macro = entries.map(f => "routine_" + f.slice(0, -2) + '()').join('; ');
+	macro = `#define ROUTINE_INCLUDE() ${macro}`
+	entries = entries.map(function(file){
+		return `void routine_${file.slice(0, -2)}(void);`;
+	});
+	entries.push(macro);
+
+	await fs.writeFile("routine.h", entries
+		.join('\n')
+	);
+})

@@ -67,12 +67,6 @@ static void on_fps12(struct entity_op_data *data){
 	fake.position->y = slime->y;
 	fake.position->z = slime->z;
 
-	/*struct map_position dest = {
-		.x = 0,
-		.y = 300,
-		.z = 0
-	};*/
-
 	struct map_position *dest = &dests[0];
 
 	struct map_position rest = {

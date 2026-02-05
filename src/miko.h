@@ -91,6 +91,7 @@ struct map_entity {
 	struct map_entity *next;
 	struct map_entity_action *actions;
 	struct map_position position[1];
+	struct map_position destination[1];
 	struct animation *animation;
 	struct graphics *graphics;
 	int64_t directionX;

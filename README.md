@@ -2,14 +2,10 @@
 RPG game made with C and SDL3
 
 ## progress
-
-| Version           | Detail                        |
-|:------------------|------------------------------:|
-| v0.0.1            | The games in in a very unstable state with ideas being poured in and constant breaking code changes|
-|                   |                               |
-|                   |                               |
-|                   |                               |
-|                   |                               |
+### Version v0.0.1
+### Version v0.0.2
+The game's in in a very unstable state with ideas being poured in
+and constant breaking code changes
 
 ## Compiling
 
