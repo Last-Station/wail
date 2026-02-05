@@ -172,12 +172,13 @@ struct map_entity *entity_new(struct map *map,
 	struct map_entity entity = {
 		.id = entity_new_count++,
 		.type = type,
-		.graphics = graphics,
+		.custom = 0
+
 		.animation = animation,
+		.graphics = graphics,
 		.directionX = 0,
 		.directionY = 0,
 		.movspd = 0,
-		.custom = 0
 	};
 
 	struct map_entity *result = map_entities_add(map, &entity);
