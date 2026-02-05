@@ -1,6 +1,8 @@
 #!/bin/bash
 # This is for dev only.
 
+alias g++=g++ --driver-mode=g++ -Wall -Wextra -Waddress-of-packed-member -Wcast-align
+
 # Variables
 INCLUDE_LIB_PATHS="-Ibin/SDL_bin/include/ -Ibin/SDL_ttf_bin/include/ \
 		-Ibin/SDL_image_bin/include/ -Ibin/tinyspline_bin/include\

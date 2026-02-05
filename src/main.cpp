@@ -239,7 +239,7 @@ void on_create(void *data){
 		.graphics = gdata
 	};
 
-	printf("WCREATE\n");
+	//printf("WCREATE\n");
 	graphics = gdata;
 	map_new(&map);
 	mapgen();
@@ -266,7 +266,7 @@ void on_event(void *data){
 		.event = event
 	};
 
-	printf("WEVENT\n");
+	//printf("WEVENT\n");
 	for(int i = 0; i < entity_op_size; i++){
 		struct entity_op *op = &entity_op[i];
 		if(op->on_event == NULL)
