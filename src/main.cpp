@@ -18,7 +18,11 @@ size_t txt_size = (size_t)(bootup_txt_size);
 
 
 // src/gui/MainWindow.cpp
-int MainWindow(void (*on_create)(void *data), void (*on_loop)(void *data));
+int MainWindow(
+	void (*on_create)(void *data),
+	void (*on_loop)(void *data),
+	void (*on_event)(void *data)
+);
 
 void cleanup() {
 	TTF_Quit();
@@ -176,8 +180,9 @@ struct map_entity *entity_new(struct map *map,
 		.custom = 0
 	};
 
+	struct map_entity *result = map_entities_add(map, &entity);
 	struct entity_op_data data = {
-		.entity = &entity
+		.entity = result
 	};
 	struct entity_op *op = &entity_op[type];
 	data.entity->position->x = 0.0;
@@ -189,8 +194,6 @@ struct map_entity *entity_new(struct map *map,
 		printf("[NEW] Warning: Unhandled entity type (%i)\n", type);
 	}
 
-	struct map_entity *result = map_entities_add(map, &entity);
-
 	//printf("POS %.2f %.2f\n", result->position->x, result->position->y);
 
 	return result;
@@ -201,7 +204,7 @@ void (*start)();
 void mapgen(){
 	struct map_entity *slime = entity_new(&map, 101);
 	struct map_entity *entity = entity_new(&map, 50);
-	map_center = entity;
+	//map_center = entity;
 
 	/*entity->position->x = 200;
 	entity->position->y = 200;
@@ -254,6 +257,24 @@ void on_create(void *data){
 	fps30(&on_fps30, NULL, gdata);
 }
 
+void on_event(void *data){
+	SDL_Event *event = (SDL_Event *) data;
+	struct entity_op_data op_data = {
+		.map = &map,
+		.entity = NULL,
+		.graphics = graphics,
+		.event = event
+	};
+
+	printf("WEVENT\n");
+	for(int i = 0; i < entity_op_size; i++){
+		struct entity_op *op = &entity_op[i];
+		if(op->on_event == NULL)
+			continue ;
+
+		op->on_event(&op_data);
+	}
+}
 
 int main(){
 	ROUTINE_INCLUDE();
@@ -262,7 +283,7 @@ int main(){
 	// Print bootup "art"
 	printf("%.*s", (int)txt_size, bootup_txt_data);
 
-	if(MainWindow(on_create, on_loop) != 0) {
+	if(MainWindow(on_create, on_loop, on_event) != 0) {
 		printf("CLEANUP\n");
 		cleanup();
 		return 1;

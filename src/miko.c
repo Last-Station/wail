@@ -587,9 +587,9 @@ void map_entity_draw(struct map_entity *entity){
 	printf("                                     \n");
 	printf("\033[2A");
 	printf("POSITION %.2f %.2f\n", position.x, position.y);*/
-	printf("POSITION/DEBUG %.2f %.2f\n",
+	/*printf("POSITION/DEBUG %.2f %.2f\n",
 		map_center->position->x,
-		map_center->position->y);
+		map_center->position->y);*/
 	//printf("POS %.2f %.2f\n", result->position->x, result->position->y);
 	struct SDL_FRect frect;
 	map_position_to_frect(&position, &frect, 64, 64);

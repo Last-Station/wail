@@ -34,12 +34,14 @@ struct entity_op_data {
 	struct map *map;
 	struct map_entity *entity;
 	struct graphics *graphics;
+	SDL_Event *event;
 };
 
 struct entity_op {
 	void (*on_tick)(struct entity_op_data *);
 	void (*on_init)(struct entity_op_data *);
 	void (*on_new)(struct entity_op_data *);
+	void (*on_event)(struct entity_op_data *);
 
 	void (*on_fps12)(struct entity_op_data *);
 	void (*on_fps24)(struct entity_op_data *);

@@ -61,7 +61,11 @@ struct graphics {
 	SDL_Renderer *renderer;
 };
 
-int MainWindow(void (*on_create)(void *data), void (*on_loop)(void *data)){
+int MainWindow(
+	void (*on_create)(void *data),
+	void (*on_loop)(void *data),
+	void (*on_event)(void *data)
+){
 	bool SDL_tasks_done {0};
 	if(!SDL_Init(SDL_INIT_VIDEO)) {
 		SDL_Log("Couldn't initialize SDL: %s", SDL_GetError());
@@ -115,6 +119,8 @@ int MainWindow(void (*on_create)(void *data), void (*on_loop)(void *data)){
 			if (event.type == SDL_EVENT_QUIT) {
 				SDL_tasks_done = 1;
 			}
+
+			on_event(&event);
 		}
 
 		// Clear the window making the background transparent
