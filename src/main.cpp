@@ -218,6 +218,7 @@ void mapgen(){
 
 int scrw = 720;
 int scrh = 540;
+int test(void);
 
 // void *data is always of struct graphics type
 // ONLY CALLED ONCE AFTER WINDOW CREATION
@@ -256,6 +257,7 @@ void on_create(void *data){
 	fps12(&on_fps12, NULL, gdata);
 	fps24(&on_fps24, NULL, gdata);
 	fps30(&on_fps30, NULL, gdata);
+	test();
 }
 
 void on_event(void *data){
@@ -289,6 +291,54 @@ int main(){
 		cleanup();
 		return 1;
 	}
+
+	return 0;
+}
+
+int test(void){
+	struct chstruct user = {
+		.map = "username 32; password 64; age 4; data 16",
+		.data = (char *) malloc(96)
+	};
+
+	int age = 20;
+	void *mptr = malloc(256);
+	size_t len;
+	char *entry = chstruct_ptrget(&user, "username", &len);
+	printf("struct `user` -> username is %zu byte long\n", len);
+	memcpy(entry, "DevMkay", 7);
+	printf(" %.32s\n", entry);
+
+	entry = chstruct_ptrget(&user, "password", &len);
+	printf("struct `user` -> password is %zu byte long\n", len);
+	memcpy(entry, "RottenPoisonousPotatoForThemToEat", 57 - 24);
+	printf(" %.64s\n", entry);
+
+
+	printf("Final:\n");
+	entry = chstruct_ptrget(&user, "username", &len);
+	printf(" %.32s\n", entry);
+	entry = chstruct_ptrget(&user, "password", &len);
+	printf(" %.64s\n", entry);
+	entry = chstruct_ptrget(&user, "password", &len);
+	printf("Total:\n ");
+	fwrite(user.data, 1, 96, stdout);
+	printf("\n");
+	printf("Cross type checking\n");
+	memcpy(entry, &mptr, 16);
+	mptr = NULL;
+	memcpy(&mptr, entry, 16);
+	entry = chstruct_ptrget(&user, "data", &len);
+	printf("Data Pointer -> %ull\n", mptr);
+	free(mptr);
+	printf("Data Pointer FREE OK\n", mptr);
+
+	entry = chstruct_ptrget(&user, "age", &len);
+	memcpy(entry, &age, 4);
+	age = 99;
+
+	memcpy(&age, entry, 4);
+	printf("Age -> %i\n", age);
 
 	return 0;
 }

@@ -603,3 +603,132 @@ void map_entity_draw(struct map_entity *entity){
 		SDL_RenderTexture(renderer, frame, NULL, &frect);
 	}
 }
+
+SDL_Texture *map_entity_frame_at(struct map_entity *entity, double pos){
+	struct animation *meta = entity->animation;
+	struct texture_animation *animation = meta
+		->texture
+		->animation
+	;
+
+	// if pos is fraction of zero, treat it as percentage
+	if(pos < 1.0){
+		pos = ((double) animation->count * pos);
+	}
+
+	return animation->frames[(size_t) fmod(pos, (double)animation->count)];
+}
+
+SDL_Texture *map_entity_frame_get(struct map_entity *entity){
+	return map_entity_frame_at(entity, (double) entity->animation->pos);
+}
+
+SDL_Texture *map_entity_frame_next(struct map_entity *entity){
+	return map_entity_frame_at(
+		entity, (double) entity->animation->pos++
+	);
+}
+
+SDL_Texture *map_entity_frame_minmax(struct map_entity *entity,
+	size_t min,
+	size_t max
+){
+	if(entity->animation->pos < min){
+		entity->animation->pos = min - 1;
+	} else if(entity->animation->pos > max){
+		entity->animation->pos = max - 1;
+	}
+
+	return map_entity_frame_next(entity);
+}
+
+unsigned char chstruct_is_text(const char c){
+	if(c < 65){
+		if(c < 48 || c > 57){
+			return 0;
+		}
+
+		return 1;
+	}
+
+	if(c > 90){
+		if(c < 97 || c > 122){
+			return 0;
+		}
+
+		return 1;
+	}
+
+	return 0;
+}
+
+char *chstruct_ptrget(
+	struct chstruct *cstrt,
+	const char *key,
+	size_t *len
+){
+	char *map = cstrt->map;
+	char *data = cstrt->data;
+
+	size_t key_size = strlen(key);
+	size_t map_size = strlen(map);
+	size_t blindex = 0;
+	if(key_size > map_size)
+		return NULL;
+
+	char memsize[256] = { 0 };
+	char *kstart = map;
+	char *kend = map;
+	while(1){
+		while(!chstruct_is_text(kstart[0])){
+			if((kstart - map) > map_size) goto end;
+
+			kstart++;
+		}
+
+		kend = strchr(kstart, ' ');
+		if(kend == NULL) goto end;
+		if(key_size == (kend - kstart)
+			&& strncmp(kstart, key, kend - kstart) == 0
+		){
+			kstart = kend + 1;
+			while(!chstruct_is_text(kstart[0])){
+				if((kstart - map) > map_size) goto end;
+
+				kstart++;
+			}
+
+			//printf("debug: found match %s\n", key);
+			kend = strchr(kstart, ';');
+			if(kend == NULL) kend = strchr(kstart, 0);
+			if(kend == NULL) goto end;
+			memcpy(memsize, kstart, kend - kstart);
+			memsize[(kend - kstart)] = 0;
+
+			len[0] = (size_t) strtoull(memsize, NULL, 10);
+			//memcpy(dest, data, len[0]);
+			return data;
+		} else {
+			kstart = kend + 1;
+			while(!chstruct_is_text(kstart[0])){
+				if((kstart - map) > map_size) goto end;
+
+				kstart++;
+			}
+
+			kend = strchr(kstart, ';');
+			if(kend == NULL) goto end;
+			memcpy(memsize, kstart, kend - kstart);
+			memsize[(kend - kstart)] = 0;
+			data = data + (size_t) strtoull(memsize, NULL, 10);
+			kstart = kend + 1;
+		}
+
+		if((kstart - map) > map_size) goto end;
+	}
+
+	end:
+		len[0] = 0;
+
+		return NULL;
+}

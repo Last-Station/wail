@@ -1,6 +1,7 @@
 #include <cstdio>
 #include <miko.h>
 extern struct map map;
+extern struct map_entity *map_center;
 extern struct entity_op entity_op[entity_op_size];
 static void action_move(struct map_entity_action_data *data){
 
@@ -34,7 +35,9 @@ static void on_fps30(struct entity_op_data *data){
 static void on_tick(struct entity_op_data *data){
 	struct map_entity *entity = data->entity;
 	SDL_Renderer *renderer = data->graphics->renderer;
-	struct texture texture = textures[0];
+
+	entity->destination->x = map_center->position->x;
+	entity->destination->y = map_center->position->y;
 
 	entity->animation->texture = &textures[0];
 	entity->graphics->renderer = data->graphics->renderer;
@@ -44,7 +47,6 @@ static void on_tick(struct entity_op_data *data){
 
 static void on_init(struct entity_op_data *data){
 	SDL_Renderer *renderer = data->graphics->renderer;
-
 	load_textures(textures, renderer);
 
 	struct map_entity *entity = entity_new(&map, 201);
@@ -56,11 +58,9 @@ static void on_new(struct entity_op_data *data){
 	entity->directionY = 1;
 	entity->animation->pos = 0;
 
-	entity->position->x = 900;
+	entity->position->x = 0;
 	entity->position->y = 0;
 
-	entity->destination->x = 0;
-	entity->destination->y = 900;
 	entity->movspd = 10;
 
 	entity->data = NULL;

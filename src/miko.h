@@ -5,6 +5,7 @@
 #define MAP_ENTITY_UNSET 1
 #define OUT_OF_MEMORY 2
 
+#include <cstring>
 #include <cstdlib>
 #include <tinyspline.h>
 #include <sqlite3.h>
@@ -173,4 +174,34 @@ void map_entity_go(struct map_entity *,
 );
 struct map_entity *entity_new(struct map *map, unsigned int type);
 
+/**
+
+*/
+SDL_Texture *map_entity_frame_at(struct map_entity *entity, double pos);
+SDL_Texture *map_entity_frame_get(struct map_entity *entity);
+SDL_Texture *map_entity_frame_next(struct map_entity *entity);
+SDL_Texture *map_entity_frame_minmax(struct map_entity *entity,	size_t min);
+
+void map_entity_emit(struct map_entity *entity,
+	const char event[],
+	void *data
+);
+void map_entity_on(struct map_entity *entity,
+	const char event[],
+	void (*callback)(void *data)
+);
+void map_entity_off(struct map_entity *entity,
+	const char event[],
+	void (*callback)(void *data)
+);
+
+struct chstruct {
+	char *map;
+	char *data;
+};
+/*
+	"username 128;password 128"
+*/
+unsigned char chstruct_is_text(const char c);
+char *chstruct_ptrget(struct chstruct *cstrt, const char *key, size_t *len);
 #endif
