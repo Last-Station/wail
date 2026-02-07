@@ -60,3 +60,7 @@ After running one of the above scripts, you should find an executable in build/
 ## Installing
 
 TODO!
+
+## Important Note
+- Do not store addresses from map.entities! It **WILL** change!
+	store the index instead

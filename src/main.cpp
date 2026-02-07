@@ -154,7 +154,7 @@ void on_loop(void *data){
 
 struct graphics *graphics = NULL;
 unsigned int entity_new_count = 0;
-struct map_entity *entity_new(struct map *map,
+size_t entity_new(struct map *map,
 	unsigned int type
 ){
 	printf("entity_new(): %i\n", type);
@@ -181,7 +181,10 @@ struct map_entity *entity_new(struct map *map,
 		.movspd = 0,
 	};
 
-	struct map_entity *result = map_entities_add(map, &entity);
+	size_t result_index = map_entities_add(map, &entity);
+	struct map_entity *result = &(map->entities[
+		result_index
+	]);
 	struct entity_op_data data = {
 		.entity = result
 	};
@@ -197,14 +200,14 @@ struct map_entity *entity_new(struct map *map,
 
 	//printf("POS %.2f %.2f\n", result->position->x, result->position->y);
 
-	return result;
+	return result_index;
 }
 
 void (*start)();
 
 void mapgen(){
-	struct map_entity *slime = entity_new(&map, 101);
-	struct map_entity *entity = entity_new(&map, 50);
+	/*struct map_entity *slime = entity_new(&map, 101);
+	struct map_entity *entity = entity_new(&map, 50);*/
 	//map_center = entity;
 
 	/*entity->position->x = 200;
@@ -212,12 +215,19 @@ void mapgen(){
 	/*entity->destination->x = 0;
 	entity->destination->y = 0;*/
 	//entity->movspd = 1;
+	size_t slime_index = entity_new(&map, 101);
+	size_t entity_index = entity_new(&map, 50);
+	struct map_entity *slime = &map.entities[slime_index];
+	struct map_entity *entity = &map.entities[entity_index];
+
 	entity->custom = 0;
 	printf("MAPGEN\n");
 }
 
-int scrw = 720;
-int scrh = 540;
+int scrw = 1440;
+int scrh = 1080;
+int scrwc = 720;
+int scrhc = 540;
 int test(void);
 
 // void *data is always of struct graphics type

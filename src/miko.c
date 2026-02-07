@@ -110,7 +110,8 @@ size_t map_entities_len(struct map *map){
 	return i;
 }
 
-struct map_entity *map_entities_add(struct map *map,
+/*struct map_entity **/
+size_t map_entities_add(struct map *map,
 	struct map_entity *entity
 ){
 	void *nalloc = POINTER_UNITIALIZED;
@@ -134,7 +135,8 @@ struct map_entity *map_entities_add(struct map *map,
 	memcpy(&map->entities[count], entity, sizeof(struct map_entity));
 	map->entities[count + 1].type = 0;
 
-	return &map->entities[count];
+	//return &map->entities[count];
+	return count;
 }
 
 int map_entities_unset(struct map *map, size_t index){
@@ -302,13 +304,90 @@ void map_entity_go(struct map_entity *entity,
 	}
 }
 
+double get_entity_distance(struct map_entity *e1, struct map_entity *e2) {
+	double dx = e1->position->x - e2->position->x;
+	double dy = e1->position->y - e2->position->y;
+	double dz = e1->position->z - e2->position->z;
+
+	return sqrt(dx*dx + dy*dy + dz*dz);
+}
+
+/**
+* Checks if the distance between two entities is less than or equal to a given limit.
+* * @param e1    Pointer to the first entity
+* @param e2    Pointer to the second entity
+* @param limit The maximum distance to check for
+* @return      bool (true if within limit, false otherwise)
+*/
+char map_entity_within(
+	struct map_entity *e1,
+	struct map_entity *e2,
+	double limit
+){
+	// Basic null checks to prevent crashes
+	if (!e1 || !e1->position || !e2 || !e2->position) {
+		return 0;
+	}
+
+	double dx = e1->position->x - e2->position->x;
+	double dy = e1->position->y - e2->position->y;
+	double dz = e1->position->z - e2->position->z;
+
+	// Calculate distance squared: x^2 + y^2 + z^2
+	double dist_sq = (dx * dx) + (dy * dy) + (dz * dz);
+
+	// Compare against limit squared
+	return dist_sq <= (limit * limit);
+}
+
+
+double get_position_distance(struct map_position *e1, struct map_position *e2) {
+	double dx = e1->x - e2->x;
+	double dy = e1->y - e2->y;
+	double dz = e1->z - e2->z;
+
+	return sqrt(dx*dx + dy*dy + dz*dz);
+}
+
+/**
+* Checks if the distance between two entities is less than or equal to a given limit.
+* * @param e1    Pointer to the first entity
+* @param e2    Pointer to the second entity
+* @param limit The maximum distance to check for
+* @return      bool (true if within limit, false otherwise)
+*/
+char map_position_within(
+	struct map_position *e1,
+	struct map_position *e2,
+	double limit
+){
+	// Basic null checks to prevent crashes
+	if (!e1 || !e2) {
+		return 0;
+	}
+
+	double dx = e1->x - e2->x;
+	double dy = e1->y - e2->y;
+	double dz = e1->z - e2->z;
+
+	// Calculate distance squared: x^2 + y^2 + z^2
+	double dist_sq = (dx * dx) + (dy * dy) + (dz * dz);
+
+	// Compare against limit squared
+	return dist_sq <= (limit * limit);
+}
+
 void map_entity_translate(
 	struct map_entity *center,
 	struct map_entity *entity,
 	struct map_position *position
 ){
-	position->x = entity->position->x - center->position->x;
-	position->y = entity->position->y - center->position->y;
+	position->x = (entity->position->x - center->position->x)
+		+ scrwc
+	;
+	position->y = (entity->position->y - center->position->y)
+		+ scrhc
+	;
 	position->z = entity->position->z - center->position->z;
 }
 

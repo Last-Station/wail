@@ -36,8 +36,8 @@ static void on_tick(struct entity_op_data *data){
 	struct map_entity *entity = data->entity;
 	SDL_Renderer *renderer = data->graphics->renderer;
 
-	entity->destination->x = map_center->position->x;
-	entity->destination->y = map_center->position->y;
+	/*entity->destination->x = map_center->position->x;
+	entity->destination->y = map_center->position->y;*/
 
 	entity->animation->texture = &textures[0];
 	entity->graphics->renderer = data->graphics->renderer;
@@ -49,7 +49,7 @@ static void on_init(struct entity_op_data *data){
 	SDL_Renderer *renderer = data->graphics->renderer;
 	load_textures(textures, renderer);
 
-	struct map_entity *entity = entity_new(&map, 201);
+	//struct map_entity *entity = entity_new(&map, 201);
 }
 
 static void on_new(struct entity_op_data *data){

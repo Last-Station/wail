@@ -8,7 +8,8 @@ static void on_tick(struct entity_op_data *data){
 }
 
 static void on_init(struct entity_op_data *data){
-	struct map_entity *entity = entity_new(&map, 3001);
+	size_t index = entity_new(&map, 3001);
+	struct map_entity *entity = &map.entities[index];
 	entity->position->x = 0;
 	entity->position->y = 0;
 	entity->custom = 1;
@@ -28,6 +29,15 @@ static void move(struct map_entity *entity){
 		.y = 0,
 		.z = 0
 	};
+
+	if(map_position_within(entity->position, destination, entity->movspd)){
+		memcpy(entity->position,
+			entity->destination,
+			sizeof(struct map_position)
+		);
+
+		return ;
+	}
 
 	map_entity_go(entity, destination, &rest, entity->movspd);
 	//printf("%i NIL %.2f %.2f\n", entity->type, rest.x, rest.y);

@@ -24,6 +24,11 @@ extern TTF_Font *	font;
 extern SDL_Texture *	TextTexture;
 extern SDL_IOStream *	fontIO;
 
+extern int scrw;
+extern int scrh;
+extern int scrwc;
+extern int scrhc;
+
 #define entity_op_size 4096
 
 struct graphics {
@@ -87,6 +92,10 @@ struct map_entity_action {
 	void (*call)(struct map_entity_action_data *);
 };
 
+/*
+	TODO: MAP ENTITIES ARE BEING MOVED AROUND
+	DO NOT KEEP POINTERS AS THE ADDRESSES WILL CHANGE!
+*/
 struct map_entity {
 	unsigned int id;
 	unsigned int type;
@@ -130,7 +139,7 @@ struct fps_callback {
 
 int map_new(struct map *);
 size_t map_entities_len(struct map *);
-struct map_entity *map_entities_add(struct map *, struct map_entity *);
+size_t map_entities_add(struct map *, struct map_entity *);
 int map_entities_unset(struct map *, size_t);
 int map_entities_defrag(struct map *);
 struct map_entity *map_entities_get(struct map *, size_t);
@@ -172,7 +181,8 @@ void map_entity_go(struct map_entity *,
 	struct map_position *,
 	double
 );
-struct map_entity *entity_new(struct map *map, unsigned int type);
+//struct map_entity *entity_new(struct map *map, unsigned int type);
+size_t entity_new(struct map *map, unsigned int type);
 
 /**
 
@@ -204,4 +214,22 @@ struct chstruct {
 */
 unsigned char chstruct_is_text(const char c);
 char *chstruct_ptrget(struct chstruct *cstrt, const char *key, size_t *len);
+
+double get_entity_distance(struct map_entity *e1, struct map_entity *e2);
+
+/**
+* Checks if the distance between two entities is less than or equal to a given limit.
+* * @param e1    Pointer to the first entity
+* @param e2    Pointer to the second entity
+* @param limit The maximum distance to check for
+* @return      bool (true if within limit, false otherwise)
+*/
+char map_position_within(
+	struct map_position *e1,
+	struct map_position *e2,
+	double limit
+);
+double get_position_distance(struct map_position *e1, struct map_position *e2);
+
+
 #endif

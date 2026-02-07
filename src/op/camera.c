@@ -16,6 +16,8 @@ static struct map_entity_action actions[] = {
 	}
 };
 
+static size_t camera_nil_index = 0;
+static struct map_entity *camera_nil = NULL;
 static void on_fps12(struct entity_op_data *data){
 	//struct map_entity *entity = data->entity;
 }
@@ -48,6 +50,37 @@ static void on_tick(struct entity_op_data *data){
 		camera->position->x += 20;
 	}*/
 
+	//printf("%ull\n", camera_nil);
+
+	camera_nil = &map.entities[camera_nil_index];
+	if(camera_nil != NULL){
+		double tx = camera->position->x - (32/2);
+		double ty = camera->position->y - (32/2);
+		camera_nil->destination->x = tx;
+		camera_nil->destination->y = ty;
+
+		/*
+		printf("Camnil %.2f %.2f\n",
+			camera_nil->position->x,
+			camera_nil->position->y
+		);
+
+		printf("Camera %.2f %.2f\n",
+			camera->position->x,
+			camera->position->y
+		);*/
+
+		/*camera_nil->position->x = 500;
+		camera_nil->position->y = 500;
+		camera_nil->destination->x = 500;
+		camera_nil->destination->y = 500;*/\
+		/*
+		camera_nil->position->x = 500.0;
+		camera_nil->position->y = 500.0;
+		camera_nil->destination->x = 500.0;
+		camera_nil->destination->y = 500.0;*/
+	}
+
 
 	for(size_t i = 0; held[i] != 0; i++){
 		//printf("(%i -> %i) %i]", held[i], SDLK_A, held[i] == SDLK_A);
@@ -66,12 +99,20 @@ static void on_tick(struct entity_op_data *data){
 			continue ;
 		}
 		//printf("%i ", held[i]);
-		fflush(stdout);
+		//fflush(stdout);
 	}
 }
 
 static void on_init(struct entity_op_data *data){
-	//printf("CAMERA_INIT\n");
+	printf("CAMERA_INIT\n");
+	camera_nil_index = entity_new(&map, 201);
+	camera_nil = &map.entities[camera_nil_index];
+	camera_nil->position->x = 0;
+	camera_nil->position->y = 0;
+	camera_nil->destination->x = 0;
+	camera_nil->destination->y = 0;
+	camera_nil->movspd = 19.5*3.0;
+
 }
 
 static void on_new(struct entity_op_data *data){
