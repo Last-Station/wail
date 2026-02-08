@@ -109,6 +109,7 @@ struct map_entity {
 	struct graphics *graphics;
 	int64_t directionX;
 	int64_t directionY;
+	double rotation;
 	double movspd;
 
 	void *data;
@@ -150,7 +151,15 @@ void map_entity_move(
 void map_entity_draw(
 	struct map_entity *
 );
-
+void map_entity_draw_resized(
+	struct map_entity *, double w, double h
+);
+void map_entity_draw_cropped(
+	struct map_entity *,
+	double srcx, double srcy,
+	double srcw, double srch,
+	double destw, double desth
+);
 void map_entity_translate(
 	struct map_entity *, struct map_entity *, struct map_position *
 );

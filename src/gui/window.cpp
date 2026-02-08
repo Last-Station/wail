@@ -92,7 +92,7 @@ int MainWindow(
 	&window, &renderer))*/
 
 	Uint32 window_flags = SDL_WINDOW_RESIZABLE
-//		| SDL_WINDOW_TRANSPARENT
+		| SDL_WINDOW_TRANSPARENT
 //		| SDL_WINDOW_BORDERLESS
 	;
 

@@ -8,8 +8,8 @@ size_t map_height = 4096;
 static SDL_FRect resize = {
 	.x = (float) 0,
 	.y = (float) 0,
-	.w = (float) 32,
-	.h = (float) 32
+	.w = (float) 64,
+	.h = (float) 64
 };
 
 void load_textures(
@@ -633,7 +633,84 @@ struct texture_animation *map_entity_get_animation(
 		determines where the entity is relative to the map
 
 */
-void map_entity_draw(struct map_entity *entity){
+void map_entity_draw_cropped(struct map_entity *entity,
+	double sx, double sy,
+	double sw, double sh,
+	double w, double h
+){
+	struct texture_animation *anim = map_entity_get_animation(entity);
+	struct map_entity_base *data = (struct map_entity_base *) entity->data;
+
+	//printf("DRAW\n");
+	SDL_Renderer *renderer = entity->graphics->renderer;
+	//printf("REN %ull\n", renderer);
+	SDL_Texture *frame = anim->frames[
+		entity->animation->pos % anim->count
+	];
+	SDL_SetTextureBlendMode(frame, SDL_BLENDMODE_BLEND);
+	//printf("SET_TEXTURE_BLEND_MODE\n");
+	//printf("DEBUG %i\n", entity->type);
+
+	if(!map_center){
+		// TODO: map_entity_draw(): OPTIM Check map_center elsewhere
+		printf("MAP_CENTER_UNINITIALIZED\n");
+		exit(1);
+	}
+
+	struct map_position sposition = {
+		.x = sx,
+		.y = sy
+	};
+
+	struct SDL_FRect sfrect;
+	map_position_to_frect(&sposition, &sfrect, sw, sh);
+
+	struct map_position position = { 0 };
+	map_entity_translate(
+		map_center,
+		entity,
+		&position
+	);
+	//printf("MAP_ENTITY_TRANSLATE\n");
+
+	/*
+	printf("\033[2A\r                                     \n");
+	printf("                                     \n");
+	printf("\033[2A");
+	printf("POSITION %.2f %.2f\n", position.x, position.y);*/
+	/*printf("POSITION/DEBUG %.2f %.2f\n",
+		map_center->position->x,
+		map_center->position->y);*/
+	//printf("POS %.2f %.2f\n", result->position->x, result->position->y);
+
+	struct SDL_FRect frect;
+	map_position_to_frect(&position, &frect, w, h);
+
+	if(entity->directionX == -1){
+		SDL_RenderTextureRotated(renderer, frame, &sfrect, &frect,
+			entity->rotation,
+
+			NULL,
+			SDL_FLIP_HORIZONTAL
+		);
+	} else {
+		if(entity->rotation != 0){
+			SDL_RenderTextureRotated(renderer, frame, &sfrect,
+				&frect,
+				entity->rotation,
+
+				NULL,
+				SDL_FLIP_NONE
+			);
+
+			return ;
+		}
+
+		SDL_RenderTexture(renderer, frame, &sfrect, &frect);
+	}
+}
+
+void map_entity_draw_resized(struct map_entity *entity, double w, double h){
 	struct texture_animation *anim = map_entity_get_animation(entity);
 	struct map_entity_base *data = (struct map_entity_base *) entity->data;
 
@@ -671,16 +748,34 @@ void map_entity_draw(struct map_entity *entity){
 		map_center->position->y);*/
 	//printf("POS %.2f %.2f\n", result->position->x, result->position->y);
 	struct SDL_FRect frect;
-	map_position_to_frect(&position, &frect, 64, 64);
+	map_position_to_frect(&position, &frect, w, h);
 
 	if(entity->directionX == -1){
-		SDL_RenderTextureRotated(renderer, frame, NULL, &frect, 0,
+		SDL_RenderTextureRotated(renderer, frame, NULL, &frect,
+			entity->rotation,
+
 			NULL,
 			SDL_FLIP_HORIZONTAL
 		);
 	} else {
+		if(entity->rotation != 0){
+			SDL_RenderTextureRotated(renderer, frame, NULL,
+				&frect,
+				entity->rotation,
+
+				NULL,
+				SDL_FLIP_NONE
+			);
+
+			return ;
+		}
+
 		SDL_RenderTexture(renderer, frame, NULL, &frect);
 	}
+}
+
+void map_entity_draw(struct map_entity *entity){
+	return map_entity_draw_resized(entity, 64, 64);
 }
 
 SDL_Texture *map_entity_frame_at(struct map_entity *entity, double pos){

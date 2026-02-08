@@ -178,7 +178,8 @@ size_t entity_new(struct map *map,
 		.graphics = graphics,
 		.directionX = 0,
 		.directionY = 0,
-		.movspd = 0,
+		.rotation = 0,
+		.movspd = 0
 	};
 
 	size_t result_index = map_entities_add(map, &entity);
@@ -272,6 +273,7 @@ void on_create(void *data){
 
 void on_event(void *data){
 	SDL_Event *event = (SDL_Event *) data;
+	struct map_entity *entity = NULL;
 	struct entity_op_data op_data = {
 		.map = &map,
 		.entity = NULL,
@@ -279,14 +281,24 @@ void on_event(void *data){
 		.event = event
 	};
 
-	//printf("WEVENT\n");
-	for(int i = 0; i < entity_op_size; i++){
-		struct entity_op *op = &entity_op[i];
+	for(int i = 0; map.entities[i].type != NULL; i++){
+		entity = op_data.entity = &map.entities[i];
+		struct entity_op *op = &entity_op[entity->type];
 		if(op->on_event == NULL)
 			continue ;
 
 		op->on_event(&op_data);
 	}
+
+	for(int i = 0; i < entity_op_size; i++){
+		struct entity_op *op = &entity_op[i];
+		entity = op_data.entity = NULL;
+		if(op->on_event == NULL)
+			continue ;
+
+		op->on_event(&op_data);
+	}
+
 }
 
 int main(){
